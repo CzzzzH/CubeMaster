@@ -29,15 +29,15 @@ public:
 	Controller_A3D8_Basic(HardwareSerial & sp, unsigned long baud_rate = 57600,
 			byte length = 64);
 	virtual ~Controller_A3D8_Basic();
-	void sendGlobal(byte c);
+
 	void sendColumn(byte col, byte value);
-	void sendBatch(const byte *p, byte length);
-	void sendMode(InputMode mode);
-	void sendBrightness(byte brightness);
-	void sendBgLed(byte bg_led_configure);
+    void sendGlobal(byte c); 
+    void sendBatch(const byte *p, byte length);
+    void sendMode(InputMode mode); // 设置坐标系，目前打算使用OLD
+    void sendBrightness(byte brightness); // 设置全局亮度(0~255)
+    void sendBgLed(byte bg_led_configure); // 设置背景白灯
 
 protected:
-
 	HardwareSerial & _sp;
 	const byte _length;
 
