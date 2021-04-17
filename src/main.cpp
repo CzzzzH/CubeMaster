@@ -28,27 +28,21 @@
 #include "Zigbee.h"
 #include "SnakePlayer.h"
 #include <Arduino.h>
+#include "Dodger.h"
+
 #define BYTE_LENGTH 64
 
 extern HardwareSerial Serial1;
 
 DotMatrix3D dm(1);
 Controller_A3D8 cube(dm, Serial1);
-SnakePlayer player;
+Game* game;
 byte * cache;
-
-const uint8_t PROGMEM PATTERN_LOVE[] =
-{ 0x00, 0x81, 0x81, 0xFF, // I
-		0x38, 0xFC, 0xFE, 0x3F, //heart
-		0x00, 0xFF, 0xFF, 0x01, // U
-		};
-
-const uint8_t PROGMEM PATTERN_ARROW[] =
-{ 0x08, 0x14, 0x22, 0x77, 0x14, 0x14, 0x14, 0x14, 0x14, 0x1c, };
+uint8_t initBuf[8];
+bool gameStart = false;
 
 void setup()
 {   
-	delay(1000);
     // Player's Controller Program Begin
     // Serial.begin(9600);
     // Serial2.begin(115200);
@@ -56,19 +50,17 @@ void setup()
     // Player's Controller Program End
 
     // Cube Program Begin
-	cache = new byte(BYTE_LENGTH);
+	  cache = new byte(BYTE_LENGTH);
     Serial.begin(9600);
     Serial1.begin(57600);
-    Serial3.begin(115200);
-	cube.sendBrightness(255);
+    cube.sendBrightness(255);
     cube.sendMode(Controller_A3D8_Basic::OLD);
     dm.clear();
     cube.putDM();
-
-    unsigned char buf[8];
-    while (!Zigbee::getBuffer(buf)) {}
-    player.init(buf, &dm);
-    cube.putDM();
+    randomSeed(analogRead(0));
+    while (!Zigbee::getBuffer(initBuf)) {}
+    game = new Dodger();
+    game->init(initBuf, &dm);
     // Cube Program End
 }
 
@@ -150,13 +142,14 @@ void loop()
     // Cube Program Begin
     // testAll();
     unsigned char buf[8];
-    // if (Zigbee::getBuffer(buf))
-    // {
-    //     player.movePlayer(buf, &dm);
-    //     cube.putDM();
-    //     delay(20);
-    // }
-    player.update(buf, &dm);
+    if (Zigbee::getBuffer(buf))
+    {   
+        dm.clear();
+        if (gameStart)
+            game->update(buf);
+        cube.putDM();
+        delay(50);
+    }
     // Cube Program End
 }
 
