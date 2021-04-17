@@ -23,16 +23,18 @@
  *
  */
 
-#include "DotMatrix3D.h"
 #include "Controller_A3D8.h"
-
+#include "JY61.h"
+#include "Zigbee.h"
+#include "Player.h"
+#include <Arduino.h>
 #define BYTE_LENGTH 64
 
 extern HardwareSerial Serial1;
 
 DotMatrix3D dm(1);
 Controller_A3D8 cube(dm, Serial1);
-
+Player player;
 byte * cache;
 
 const uint8_t PROGMEM PATTERN_LOVE[] =
@@ -45,12 +47,29 @@ const uint8_t PROGMEM PATTERN_ARROW[] =
 { 0x08, 0x14, 0x22, 0x77, 0x14, 0x14, 0x14, 0x14, 0x14, 0x1c, };
 
 void setup()
-{
-	delay(0x200);
+{   
+	delay(1000);
+    // Player's Controller Program Begin
+    // Serial.begin(9600);
+    // Serial2.begin(115200);
+    // Serial3.begin(115200);
+    // Player's Controller Program End
 
+    // Cube Program Begin
 	cache = new byte(BYTE_LENGTH);
-	Serial1.begin(57600);
+    Serial.begin(9600);
+    Serial1.begin(57600);
+    Serial3.begin(115200);
 	cube.sendBrightness(255);
+    cube.sendMode(Controller_A3D8_Basic::OLD);
+    dm.clear();
+    cube.putDM();
+
+    unsigned char buf[8];
+    while (!Zigbee::getBuffer(buf)) {}
+    player.init(buf, &dm);
+    cube.putDM();
+    // Cube Program End
 }
 
 // 测试背景白灯模式
@@ -91,10 +110,52 @@ void testXYZ(Controller_A3D8_Basic::InputMode mode)
     }
 }
 
-void loop()
+void testAll()
 {
-    testBackgroundLED();
-    testXYZ(Controller_A3D8_Basic::OLD);
-    delay(3000);
+    int now_x = 0, now_y = 0, now_z = 0;
+    dm.setDot(0, 0, 0);
+    cube.putDM();
+    delay(50);
+    for (auto x = 0; x < 8; ++x)
+        for (auto y = 0; y < 8; ++y)
+            for (auto z = 0; z < 8; ++z)
+            {
+                dm.setDot(now_x, now_y, now_z, false);
+                now_x = x;
+                now_y = y;
+                now_z = z;
+                dm.setDot(now_x, now_y, now_z);
+                cube.putDM();
+                delay(100);
+            }
+}
+
+void loop()
+{   
+    // Player's Controller Program Begin
+    // JY61::read();
+    // unsigned char buf[8];
+    // buf[0] = 233;
+    // buf[2] = (unsigned char)((int)(abs(JY61::Angle[0])));
+    // buf[4] = (unsigned char)((int)(abs(JY61::Angle[1])));
+    // buf[6] = (unsigned char)((int)(abs(JY61::Angle[2])));
+    // buf[7] = 234;
+    // JY61::Angle[0] >= 0 ? buf[1] = 0 : buf[1] = 1;
+    // JY61::Angle[1] >= 0 ? buf[3] = 0 : buf[3] = 1;
+    // JY61::Angle[2] >= 0 ? buf[5] = 0 : buf[5] = 1;
+    // while (Serial3.availableForWrite() < 8) {}
+    // Serial3.write(buf, 8);
+    // Player's Controller Program End
+
+    // Cube Program Begin
+    // testAll();
+    unsigned char buf[8];
+    if (Zigbee::getBuffer(buf))
+    {
+        player.movePlayer(buf, &dm);
+        cube.putDM();
+        delay(20);
+    }
+    // Cube Program End
 }
 
