@@ -144,7 +144,7 @@ void loop()
     {   
         dm.clear();
         if (gameStart)
-            game->update(buf, &dm);
+            game->update(buf);
         cube.putDM();
         delay(50);
     }
