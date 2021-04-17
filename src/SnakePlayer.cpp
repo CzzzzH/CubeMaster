@@ -65,7 +65,7 @@ void SnakePlayer::getDirection(uint8_t* buf)
 		int target = -1;
 		int value = 0;
 		for (int i=0; i<3; i++) {
-			if (abs(diff[i]) > 55 && abs(diff[i]) > abs(value)) {
+			if (abs(diff[i]) > 50 && abs(diff[i]) > abs(value)) {
 				target = i;
 				value = diff[i];
 			}
@@ -90,7 +90,9 @@ void SnakePlayer::getDirection(uint8_t* buf)
 				}
 			}
 			if (new_direction != oppo(snake.direction)) {
+				char old_direction = snake.direction;
 				snake.direction = new_direction;
+				if (!isLive()) snake.direction = old_direction;
 				// Serial.write(int(new_direction));
 				// Serial.write("hello");
 			}
@@ -140,7 +142,7 @@ bool SnakePlayer::isLive()
 	//判断蛇有没有撞到自身
 	for(int i=0; i<=snake.len-1; i++)
   	{
-		if((snake.body[i].x==NextPoint.x)&&(snake.body[i].y==NextPoint.y)&&(snake.body[i].z==NextPoint.z))
+		if(snake.body[i] == NextPoint)
 		{
 		   	snake.life = 0;
 			return 0;
