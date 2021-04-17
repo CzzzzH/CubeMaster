@@ -8,6 +8,9 @@
         "cmath": "cpp",
         "deque": "cpp",
         "char_traits": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "algorithm": "cpp",
+        "functional": "cpp",
+        "memory": "cpp"
     }
 }
