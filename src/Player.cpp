@@ -34,12 +34,15 @@ void Player::movePlayer(uint8_t* buf, DotMatrix3D* dm)
         else if (diff < -90) diff = -90;
 
         newPosition[i] += moveSign[i] * diff / 200.0;
-        if (newPosition[i] >= 7) newPosition[i] = 6.99;
-        if (newPosition[i] <= 0) newPosition[i] = 0.01;
+        int upperBase = 7;
+        int lowerBase = 0;
+        if (i == 1) lowerBase++;
+        if (newPosition[i] <= lowerBase) newPosition[i] = lowerBase + 0.001;
+        if (newPosition[i] >= upperBase) newPosition[i] = upperBase - 0.001;
     }
-    dm->setDot(int(position[0] + 0.5), int(position[1] + 0.5), int(position[2] + 0.5), false);
     dm->setDot(int(newPosition[0] + 0.5), int(newPosition[1] + 0.5), int(newPosition[2] + 0.5), on);
-    on = ~on;
+    if (on == true) on = false;
+    else on = true;
     for (int i = 0; i < 3; ++i)
         position[i] = newPosition[i];
 }

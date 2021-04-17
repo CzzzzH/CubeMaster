@@ -151,10 +151,11 @@ void loop()
     // testAll();
     unsigned char buf[8];
     if (Zigbee::getBuffer(buf))
-    {
+    {   
+        dm.clear();
         player.movePlayer(buf, &dm);
         cube.putDM();
-        delay(20);
+        delay(50);
     }
     // Cube Program End
 }
