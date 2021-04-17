@@ -26,7 +26,7 @@
 #include "Controller_A3D8.h"
 #include "JY61.h"
 #include "Zigbee.h"
-#include "Player.h"
+#include "SnakePlayer.h"
 #include <Arduino.h>
 #define BYTE_LENGTH 64
 
@@ -34,7 +34,7 @@ extern HardwareSerial Serial1;
 
 DotMatrix3D dm(1);
 Controller_A3D8 cube(dm, Serial1);
-Player player;
+SnakePlayer player;
 byte * cache;
 
 const uint8_t PROGMEM PATTERN_LOVE[] =
@@ -150,12 +150,13 @@ void loop()
     // Cube Program Begin
     // testAll();
     unsigned char buf[8];
-    if (Zigbee::getBuffer(buf))
-    {
-        player.movePlayer(buf, &dm);
-        cube.putDM();
-        delay(20);
-    }
+    // if (Zigbee::getBuffer(buf))
+    // {
+    //     player.movePlayer(buf, &dm);
+    //     cube.putDM();
+    //     delay(20);
+    // }
+    player.update(buf, &dm);
     // Cube Program End
 }
 
