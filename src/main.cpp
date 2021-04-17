@@ -26,7 +26,10 @@
 #include "Controller_A3D8.h"
 #include "JY61.h"
 #include "Zigbee.h"
+#include "SnakePlayer.h"
+#include <Arduino.h>
 #include "Dodger.h"
+
 #define BYTE_LENGTH 64
 
 extern HardwareSerial Serial1;
@@ -47,11 +50,10 @@ void setup()
     // Player's Controller Program End
 
     // Cube Program Begin
-	cache = new byte(BYTE_LENGTH);
+	  cache = new byte(BYTE_LENGTH);
     Serial.begin(9600);
     Serial1.begin(57600);
-    Serial3.begin(115200);
-	cube.sendBrightness(255);
+    cube.sendBrightness(255);
     cube.sendMode(Controller_A3D8_Basic::OLD);
     dm.clear();
     cube.putDM();
