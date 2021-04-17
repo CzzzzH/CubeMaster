@@ -2,7 +2,9 @@
 #define SNAKEPLAYER_H
 
 #include <Arduino.h>
+#include <Zigbee.h>
 #include "DotMatrix3D.h"
+#include "Game.h"
 
 #define SCALE 8	        //边长
 #define MaxLength 512   //总长度
@@ -13,8 +15,9 @@
 #define Right 3
 #define Front 2
 #define Back 1
+#define oppo(x) ((x) % 2 ? (x) + 1 : (x) - 1)
 
-class SnakePlayer
+class SnakePlayer: public Game
 {
 public:
 
@@ -49,11 +52,13 @@ public:
     Food food;
     Point TailPoint;    //存放蛇尾巴节点的临时变量
     Point NextPoint;    //存放蛇下一次移动的位置
-    DotMatrix3D* dm;
     int timer;
+    bool twinkle;
+    uint8_t index[3];
+    int initMove[3];
 
     void init(uint8_t* buf, DotMatrix3D* dm);
-    void update(uint8_t* buf, DotMatrix3D* dm);
+    void update(uint8_t* buf);
 private:
     void getDirection(uint8_t* buf);
     char move();
@@ -62,7 +67,7 @@ private:
     bool EatFood(void);
     void GetNewFoodLoc(Point &p);
     void Auto_Direction2();
-    // void Shine_Food();
+    void Shine_Food();
 };
 
 #endif

@@ -55,8 +55,8 @@ void Dodger::movePlayer(uint8_t* buf)
         
         if (diff > 90) diff = 90;
         else if (diff < -90) diff = -90;
-
         newPosition[i] += (moveSign[i] * diff) / 250.0;
+
         int upperBase, lowerBase;
         if (i == 0)
         {
@@ -76,7 +76,7 @@ void Dodger::movePlayer(uint8_t* buf)
         if (newPosition[i] <= lowerBase) newPosition[i] = lowerBase + 0.001;
         if (newPosition[i] >= upperBase) newPosition[i] = upperBase - 0.001;
     }
-    
+
     dm->setDot(int(newPosition[0] + 0.5), int(newPosition[1] + 0.5), int(newPosition[2] + 0.5), playerOn);
     if (playerOn == true) playerOn = false;
     else playerOn = true;

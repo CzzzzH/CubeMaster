@@ -542,7 +542,6 @@ void loop()
             dm.setDot(3, 6, 7);
             dm.setDot(4, 6, 7);
         }
-        
         cube.putDM();
         delay(50);
     }
